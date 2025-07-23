@@ -41,7 +41,11 @@ async def websocket_endpoint(websocket: WebSocket):
 
 @app.post("/start-locust")
 async def start_locust(request: Request):
+    global locust_process
     try:
+        if locust_process and locust_process.poll() is None:
+            return JSONResponse(status_code=400, content={"error": "Locust already running."})
+
         data = await request.json()
         users = str(data.get("users", 10))
         rate = str(data.get("rate", 2))
@@ -58,9 +62,21 @@ async def start_locust(request: Request):
             "--host", host_url
         ]
 
-        # Run Locust in a background subprocess
-        subprocess.Popen(command)
-
+        locust_process = subprocess.Popen(command)
         return {"status": "Locust started"}
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
+
+@app.post("/stop-locust")
+async def stop_locust():
+    global locust_process
+    try:
+        if locust_process and locust_process.poll() is None:
+            locust_process.send_signal(signal.SIGINT)
+            locust_process.wait()
+            locust_process = None
+            return {"status": "Locust stopped"}
+        else:
+            return JSONResponse(status_code=400, content={"error": "Locust is not running."})
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
