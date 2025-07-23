@@ -1,0 +1,22 @@
+{
+  "services": [
+    {
+      "name": "locust-service",
+      "sourceDir": "locust-service",
+      "buildCommand": "pip install -r requirements.txt",
+      "startCommand": "locust -f locustfile.py --headless -u 10 -r 2 -t 10m"
+    },
+    {
+      "name": "metrics-api",
+      "sourceDir": "metrics-api",
+      "buildCommand": "pip install -r requirements.txt",
+      "startCommand": "uvicorn main:app --host 0.0.0.0 --port 8000"
+    },
+    {
+      "name": "dashboard",
+      "sourceDir": "dashboard",
+      "buildCommand": "npm install && npm run build",
+      "startCommand": "npx serve -s build -l 3000"
+    }
+  ]
+}
