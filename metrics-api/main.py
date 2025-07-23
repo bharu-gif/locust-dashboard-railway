@@ -9,6 +9,8 @@ import asyncio
 app = FastAPI()
 connections = set()
 
+locust_process = None
+
 # Allow CORS for frontend
 app.add_middleware(
     CORSMiddleware,

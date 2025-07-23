@@ -10,7 +10,7 @@ import {
 } from "recharts";
 import "./styles.css";
 
-const LOCUST_API_URL = "locust-dashboard-railway-production.up.railway.app"; // <- change to FastAPI URL
+const LOCUST_API_URL = "https://locust-dashboard-railway-production.up.railway.app"; // <- change to FastAPI URL
 
 function StatCard({ title, value, color }) {
   return (
@@ -25,8 +25,9 @@ const MetricsDashboard = () => {
   const [metrics, setMetrics] = useState([]);
   const [users, setUsers] = useState(10);
   const [spawnRate, setSpawnRate] = useState(2);
+  const [timeLimit, setTimeLimit] = useState("10m");
   const [host, setHost] = useState("https://example.com"); // Optional
-  const [running, setRunning] = useState("10");
+  const [running, setRunning] = useState(false);
 
   useEffect(() => {
     const ws = new WebSocket(`${LOCUST_API_URL.replace(/^http/, "ws")}/ws`);
@@ -43,7 +44,8 @@ const MetricsDashboard = () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         users: Number(users),
-        spawn_rate: Number(spawnRate),
+        rate: Number(spawnRate),
+        time: timeLimit,  // ⬅️ ADD THIS IF YOU HAVE INPUT
         host,
       }),
     });
@@ -88,8 +90,8 @@ const MetricsDashboard = () => {
         <input
           type="text"
           placeholder="Run Time"
-          value={running}
-          onChange={(e) => setRunning(e.target.value)}
+          value={timeLimit}
+          onChange={(e) => setTimeLimit(e.target.value)}
         />
         <button className="start-btn" onClick={handleStart} disabled={running}>
           Start
