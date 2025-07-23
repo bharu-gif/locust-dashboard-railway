@@ -13,7 +13,7 @@ import {
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
-const socket = new WebSocket("wss://your-metrics-api.up.railway.app/ws"); // replace after deploy
+const socket = new WebSocket("wss://locust-dashboard-railway.railway.internal/ws"); // replace after deploy
 
 export default function LiveChart() {
   const [dataPoints, setDataPoints] = useState([]);
