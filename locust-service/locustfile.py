@@ -3,7 +3,7 @@ import requests
 import threading
 import time
 
-DASHBOARD_API_URL = "https://locust-dashboard-railway.railway.internal/api/metrics"  # Replace after deploy
+DASHBOARD_API_URL = "https://locust-dashboard-railway-production.up.railway.app/api/metrics"  # Replace after deploy
 
 metrics_buffer = []
 
