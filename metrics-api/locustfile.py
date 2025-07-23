@@ -4,12 +4,11 @@ import threading
 import time
 
 DASHBOARD_API_URL = "https://locust-dashboard-railway-production.up.railway.app/api/metrics"
-environment = None  # Will be set later
 
 def post_metrics_loop(env):
     while True:
         try:
-            stats = env.stats.total  # ✅ Correct way to access total stats
+            stats = env.stats.total
             metrics = {
                 "timestamp": int(time.time()),
                 "total_requests": stats.num_requests,
@@ -27,11 +26,9 @@ def post_metrics_loop(env):
             print("Failed to post metrics:", e)
         time.sleep(1)
 
-# Hook: Called once Locust is ready
 @events.init.add_listener
-def on_locust_init(env, **kwargs):
-    global environment
-    environment = env
+def on_locust_init(**kwargs):
+    env = kwargs["environment"]  # ✅ Fix here
     threading.Thread(target=post_metrics_loop, args=(env,), daemon=True).start()
 
 class WebsiteUser(HttpUser):
