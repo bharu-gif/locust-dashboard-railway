@@ -1,3 +1,4 @@
+// MetricsDashboard.jsx
 import React, { useEffect, useState } from "react";
 import {
   LineChart,
@@ -39,8 +40,13 @@ const MetricsDashboard = () => {
   useEffect(() => {
     const ws = new WebSocket(`${LOCUST_API_URL.replace(/^http/, "ws")}/ws`);
     ws.onmessage = (event) => {
-      const newMetric = JSON.parse(event.data);
-      setMetrics((prev) => [...prev.slice(-100), newMetric]);
+      const data = JSON.parse(event.data);
+      setMetrics((prev) => [...prev.slice(-100), data]);
+
+      if (data.status === "Locust stopped") {
+        setRunning(false);
+        setStartTime(null);
+      }
     };
     return () => ws.close();
   }, []);
@@ -54,8 +60,6 @@ const MetricsDashboard = () => {
         const sec = seconds % 60;
         setElapsedTime(`${minutes}m ${sec}s`);
       }, 1000);
-    } else {
-      setElapsedTime("0m 0s");
     }
     return () => clearInterval(timer);
   }, [running, startTime]);
@@ -75,11 +79,12 @@ const MetricsDashboard = () => {
 
     const data = await res.json();
     setStarting(false);
+
     if (data.status && data.status.toLowerCase().includes("locust started")) {
       setRunning(true);
       setStartTime(Date.now());
     } else {
-      alert("Failed to start Locust");
+      alert("❌ Failed to start Locust");
     }
   };
 
@@ -88,12 +93,18 @@ const MetricsDashboard = () => {
       method: "POST",
     });
     const data = await res.json();
-    if (data.status === "stopped") {
+    if (data.status === "stopped" || data.status === "Locust stopped") {
       setRunning(false);
       setStartTime(null);
     } else {
-      alert("Failed to stop Locust");
+      alert("❌ Failed to stop Locust");
     }
+  };
+
+  const handleClear = () => {
+    setMetrics([]);
+    setElapsedTime("0m 0s");
+    setStartTime(null);
   };
 
   const exportChartAsImage = () => {
@@ -187,6 +198,9 @@ const MetricsDashboard = () => {
         <button className="stop-btn" onClick={handleStop} disabled={!running}>
           Stop
         </button>
+        <button className="clear-btn" onClick={handleClear} disabled={running}>
+          Clear
+        </button>
       </div>
 
       <div className="export-buttons">
@@ -199,13 +213,13 @@ const MetricsDashboard = () => {
         <div className="stats-grid">
           <StatCard title="Total Requests" value={latest?.total_requests ?? 0} color="bg-blue" />
           <StatCard title="Users" value={latest?.users ?? 0} color="bg-purple" />
-          <StatCard title="RPS" value={latest?.rps?.toFixed(2)} color="bg-green" />
+          <StatCard title="RPS" value={latest?.rps?? 0} color="bg-green" />
           <StatCard title="Failures" value={latest?.failures ?? 0} color="bg-red" />
-          <StatCard title="Avg Response Time" value={`${latest?.avg_response_time?.toFixed(2)} ms`} color="bg-yellow" />
-          <StatCard title="Median Response Time" value={`${latest?.median_response_time?.toFixed(2)} ms`} color="bg-orange" />
-          <StatCard title="Max Response Time" value={`${latest?.max_response_time?.toFixed(2)} ms`} color="bg-gray" />
-          <StatCard title="Min Response Time" value={`${latest?.min_response_time?.toFixed(2)} ms`} color="bg-pink" />
-          <StatCard title="P95 Latency" value={`${latest?.p95?.toFixed(2)} ms`} color="bg-indigo" />
+          <StatCard title="Avg Response Time" value={`${latest?.avg_response_time?? 0} ms`} color="bg-yellow" />
+          <StatCard title="Median Response Time" value={`${latest?.median_response_time?? 0} ms`} color="bg-orange" />
+          <StatCard title="Max Response Time" value={`${latest?.max_response_time?? 0} ms`} color="bg-gray" />
+          <StatCard title="Min Response Time" value={`${latest?.min_response_time?? 0} ms`} color="bg-pink" />
+          <StatCard title="P95 Latency" value={`${latest?.p95?? 0 } ms`} color="bg-indigo" />
           <StatCard title="Uptime" value={elapsedTime} color="bg-teal" />
         </div>
 
