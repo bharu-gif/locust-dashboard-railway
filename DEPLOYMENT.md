@@ -6,6 +6,7 @@
 1. Go to [Railway](https://railway.app)
 2. Create new project from GitHub repo
 3. Select this repository
+4. Railway will auto-detect the Python application
 
 ### 2. Configure Environment Variables in Railway Dashboard
 ```
@@ -15,8 +16,13 @@ ENVIRONMENT=production
 ```
 
 ### 3. Deploy Services
-- **Backend (metrics-api)**: Railway will auto-detect and deploy
+- **Backend (metrics-api)**: Railway will auto-detect from Procfile
 - **Frontend (locust-dashboard)**: Deploy as separate service
+
+### 4. Files for Railway Deployment
+- `Procfile`: Defines the start command
+- `requirements.txt`: Python dependencies
+- `runtime.txt`: Python version specification
 
 ### 4. Get Your Database URL
 For **Aiven MySQL**:
