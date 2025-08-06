@@ -1,0 +1,163 @@
+.dashboard {
+  font-family: "Segoe UI", sans-serif;
+  padding: 2rem;
+  background: #f9fafb;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #111827;
+}
+
+.top-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.control-panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.control-panel input {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  min-width: 140px;
+}
+
+.start-btn,
+.stop-btn {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.start-btn {
+  background-color: #10b981;
+  color: white;
+}
+
+.stop-btn {
+  background-color: #ef4444;
+  color: white;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background-color: white;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  transition: transform 0.2s;
+}
+
+.stat-card:hover {
+  transform: scale(1.02);
+}
+
+.stat-card h3 {
+  font-size: 1rem;
+  margin-bottom: 0.3rem;
+  color: #374151;
+}
+
+.stat-card p {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+/* Background Colors */
+.bg-blue { background: #3b82f6; color: white; }
+.bg-green { background: #10b981; color: white; }
+.bg-yellow { background: #facc15; color: #111; }
+.bg-red { background: #ef4444; color: white; }
+.bg-purple { background: #8b5cf6; color: white; }
+.bg-orange { background: #f97316; color: white; }
+.bg-gray { background: #6b7280; color: white; }
+.bg-pink { background: #ec4899; color: white; }
+.bg-indigo { background: #6366f1; color: white; }
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: bold;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.dot.green { background-color: #10b981; }
+.dot.red { background-color: #ef4444; }
+
+.uptime {
+  font-size: 0.95rem;
+  font-weight: bold;
+  color: #4ade80;
+}
+
+.export-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+
+.export-buttons button {
+  padding: 6px 14px;
+  background-color: #4b5563;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.export-buttons button:hover {
+  background-color: #374151;
+}
+
+/* Dark Mode */
+.dark-mode {
+  background-color: #1f2937;
+  color: #f3f4f6;
+}
+
+.dark-mode .stat-card {
+  background-color: #374151;
+  color: white;
+}
+
+.dark-mode input,
+.dark-mode .start-btn,
+.dark-mode .stop-btn,
+.dark-mode .export-buttons button {
+  background-color: #4b5563;
+  color: white;
+  border: none;
+}
+
+.dark-toggle {
+  margin-left: auto;
+}

@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # FastAPI Backend
+  metrics-api:
+    build: ./metrics-api
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SECRET_KEY=${SECRET_KEY}
+      - ENVIRONMENT=${ENVIRONMENT:-development}
+    restart: unless-stopped
+
+  # React Frontend
+  locust-dashboard:
+    build: ./locust-dashboard
+    ports:
+      - "3000:80"
+    depends_on:
+      - metrics-api
+    environment:
+      - REACT_APP_API_URL=${REACT_APP_API_URL:-http://localhost:8000}
+    restart: unless-stopped
+
+  # Alternative Dashboard
+  dashboard:
+    build: ./dashboard
+    ports:
+      - "3001:80"
+    restart: unless-stopped
+
+  # Locust Load Testing Service
+  locust-service:
+    build: ./locust-service
+    depends_on:
+      - metrics-api
+    restart: unless-stopped
+
+# For production, create a .env file with:
+# DATABASE_URL=your_database_url
+# SECRET_KEY=your_secret_key
+# ENVIRONMENT=production
+# REACT_APP_API_URL=https://your-api-domain.com

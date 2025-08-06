@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+uvicorn[standard]
+locust==2.15.1
+requests
+python-jose[cryptography]
+passlib[bcrypt]
+python-multipart
+bcrypt
+email-validator
+mysql-connector-python
+sqlalchemy
+databases[mysql]
