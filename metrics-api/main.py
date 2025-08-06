@@ -50,15 +50,33 @@ class TokenData(BaseModel):
 # Startup and shutdown events
 @app.on_event("startup")
 async def startup():
-    # Create tables if they don't exist
-    create_tables()
-    # Connect to database
-    await connect_db()
+    try:
+        # Only create tables if DATABASE_URL is properly configured
+        db_url = os.getenv("DATABASE_URL")
+        if db_url and "localhost" not in db_url:
+            # Create tables if they don't exist
+            create_tables()
+            print("Database tables created successfully")
+            
+            # Connect to database
+            await connect_db()
+            print("Database connection established")
+        else:
+            print("Skipping database initialization - using localhost/no proper database configured")
+    except Exception as e:
+        print(f"Startup error: {e}")
+        # Don't crash the app, just log the error
+        pass
 
 @app.on_event("shutdown")
 async def shutdown():
-    # Disconnect from database
-    await disconnect_db()
+    try:
+        # Disconnect from database
+        await disconnect_db()
+        print("Database connection closed")
+    except Exception as e:
+        print(f"Shutdown error: {e}")
+        pass
 
 # Allow CORS for frontend
 app.add_middleware(

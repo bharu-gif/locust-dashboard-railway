@@ -8,6 +8,8 @@ passlib[bcrypt]
 python-multipart
 bcrypt
 email-validator
-mysql-connector-python
+pymysql
+cryptography
 sqlalchemy
 databases[mysql]
+aiomysql

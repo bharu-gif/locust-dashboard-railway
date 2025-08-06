@@ -11,14 +11,20 @@ DATABASE_URL = os.getenv(
     "mysql+pymysql://localhost:3306/defaultdb"  # Default fallback for local development
 )
 
+# Ensure the URL uses pymysql driver
+if DATABASE_URL.startswith("mysql://"):
+    DATABASE_URL = DATABASE_URL.replace("mysql://", "mysql+pymysql://", 1)
+
 # For async operations
 ASYNC_DATABASE_URL = DATABASE_URL.replace("mysql+pymysql://", "mysql+aiomysql://")
+
+print(f"Database URL (masked): {DATABASE_URL.split('@')[0]}@***")
 
 # Create database instance
 database = Database(ASYNC_DATABASE_URL)
 
 # SQLAlchemy setup
-engine = create_engine(DATABASE_URL)
+engine = create_engine(DATABASE_URL, pool_pre_ping=True, pool_recycle=300)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
