@@ -2,7 +2,12 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
 const AuthContext = createContext();
-const API_BASE_URL = 'http://localhost:8000';
+
+// Configure API base URL based on environment
+const API_BASE_URL = process.env.REACT_APP_API_URL || 
+  (process.env.NODE_ENV === 'production' 
+    ? 'https://locust-dashboard-railway-production.up.railway.app' 
+    : 'http://localhost:8000');
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
