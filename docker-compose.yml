@@ -14,13 +14,15 @@ services:
 
   # React Frontend
   locust-dashboard:
-    build: ./locust-dashboard
+    build: 
+      context: ./locust-dashboard
+      dockerfile: Dockerfile.compose
     ports:
       - "3000:80"
     depends_on:
       - metrics-api
     environment:
-      - REACT_APP_API_URL=${REACT_APP_API_URL:-http://localhost:8000}
+      - REACT_APP_API_URL=http://localhost:8000
     restart: unless-stopped
 
   # Alternative Dashboard

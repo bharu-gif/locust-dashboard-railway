@@ -65,7 +65,9 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"] if not IS_PRODUCTION else [
         "https://your-frontend-domain.com",
-        "https://your-frontend-domain.railway.app"
+        "https://your-frontend-domain.railway.app",
+        "https://*.up.railway.app",
+        "http://localhost:3000"
     ],
     allow_methods=["*"],
     allow_headers=["*"],
