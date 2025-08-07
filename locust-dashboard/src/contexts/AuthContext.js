@@ -1,13 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_BASE_URL } from '../config/api';
 
 const AuthContext = createContext();
-
-// Configure API base URL based on environment
-const API_BASE_URL = process.env.REACT_APP_API_URL || 
-  (process.env.NODE_ENV === 'production' 
-    ? 'https://locust-dashboard-railway-production.up.railway.app' 
-    : 'http://localhost:8000');
 
 // Utility function to safely extract error messages
 const extractErrorMessage = (error) => {
@@ -137,8 +132,8 @@ export const AuthProvider = ({ children }) => {
         full_name 
       });
       
-      // After successful signup, login the user
-      return await login(email, password);
+      // After successful signup, return success without auto-login
+      return { success: true, message: 'Account created successfully! Please login.' };
     } catch (error) {
       console.error('Signup error:', error);
       console.error('Error response:', error.response);

@@ -196,7 +196,7 @@ export default function Dashboard() {
         <Typography
           variant="body2"
           sx={{
-            color: 'rgba(255, 255, 255, 0.6)',
+            color: '#ccc',
             mb: 2,
           }}
         >
@@ -204,7 +204,7 @@ export default function Dashboard() {
         </Typography>
       </Box>
 
-      <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.1)', mx: 2 }} />
+      <Divider sx={{ borderColor: '#555', mx: 2 }} />
 
       <List sx={{ px: 2, py: 2 }}>
         {menuItems.map((item) => (
@@ -222,13 +222,13 @@ export default function Dashboard() {
                 },
               },
               '&:hover': {
-                background: 'rgba(255, 255, 255, 0.05)',
+                background: '#555',
               },
             }}
           >
             <ListItemIcon
               sx={{
-                color: selectedMenu === item.id ? 'white' : 'rgba(255, 255, 255, 0.7)',
+                color: selectedMenu === item.id ? 'white' : '#ccc',
                 minWidth: 40,
               }}
             >
@@ -238,7 +238,7 @@ export default function Dashboard() {
               primary={item.label}
               sx={{
                 '& .MuiListItemText-primary': {
-                  color: selectedMenu === item.id ? 'white' : 'rgba(255, 255, 255, 0.8)',
+                  color: selectedMenu === item.id ? 'white' : '#ddd',
                   fontWeight: selectedMenu === item.id ? 600 : 400,
                 },
               }}
@@ -248,25 +248,25 @@ export default function Dashboard() {
       </List>
 
       <Box sx={{ mt: 'auto', p: 2 }}>
-        <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.1)', mb: 2 }} />
+        <Divider sx={{ borderColor: '#555', mb: 2 }} />
         <ListItemButton
           onClick={() => setSelectedMenu('settings')}
           sx={{
             borderRadius: 2,
             mb: 1,
             '&:hover': {
-              background: 'rgba(255, 255, 255, 0.05)',
+              background: '#555',
             },
           }}
         >
-          <ListItemIcon sx={{ color: 'rgba(255, 255, 255, 0.7)', minWidth: 40 }}>
+          <ListItemIcon sx={{ color: '#ccc', minWidth: 40 }}>
             <Settings />
           </ListItemIcon>
           <ListItemText
             primary="Settings"
             sx={{
               '& .MuiListItemText-primary': {
-                color: 'rgba(255, 255, 255, 0.8)',
+                color: '#ddd',
               },
             }}
           />
@@ -276,7 +276,7 @@ export default function Dashboard() {
           sx={{
             borderRadius: 2,
             '&:hover': {
-              background: 'rgba(255, 82, 82, 0.1)',
+              background: '#d32f2f',
             },
           }}
         >
@@ -302,10 +302,9 @@ export default function Dashboard() {
       sx={{
         width: sidebarOpen ? `calc(100% - ${drawerWidth}px)` : '100%',
         ml: sidebarOpen ? `${drawerWidth}px` : 0,
-        background: 'rgba(255, 255, 255, 0.1)',
-        backdropFilter: 'blur(20px)',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        boxShadow: 'none',
+        background: '#1976d2',
+        border: '1px solid #e0e0e0',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
         transition: theme.transitions.create(['margin', 'width'], {
           easing: theme.transitions.easing.sharp,
           duration: theme.transitions.duration.leavingScreen,
@@ -318,7 +317,7 @@ export default function Dashboard() {
           aria-label="toggle drawer"
           onClick={() => setSidebarOpen(!sidebarOpen)}
           edge="start"
-          sx={{ mr: 2, color: 'rgba(255, 255, 255, 0.8)' }}
+          sx={{ mr: 2, color: 'white' }}
         >
           <Menu />
         </IconButton>
@@ -336,15 +335,15 @@ export default function Dashboard() {
         </Typography>
 
         <Stack direction="row" spacing={1} alignItems="center">
-          <IconButton sx={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+          <IconButton sx={{ color: 'white' }}>
             <Search />
           </IconButton>
-          <IconButton sx={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+          <IconButton sx={{ color: 'white' }}>
             <Badge badgeContent={4} color="error">
               <Notifications />
             </Badge>
           </IconButton>
-          <IconButton sx={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+          <IconButton sx={{ color: 'white' }}>
             <AccountCircle />
           </IconButton>
         </Stack>
@@ -357,9 +356,8 @@ export default function Dashboard() {
       <Card
         sx={{
           height: '100%',
-          background: 'rgba(255, 255, 255, 0.1)',
-          backdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
+          background: 'white',
+          border: '1px solid #e0e0e0',
           borderRadius: 3,
           position: 'relative',
           overflow: 'hidden',
@@ -385,7 +383,7 @@ export default function Dashboard() {
               <Typography
                 variant="body2"
                 sx={{
-                  color: 'rgba(255, 255, 255, 0.7)',
+                  color: '#666',
                   mb: 1,
                   fontWeight: 500,
                 }}
@@ -395,7 +393,7 @@ export default function Dashboard() {
               <Typography
                 variant="h4"
                 sx={{
-                  color: 'white',
+                  color: '#333',
                   fontWeight: 700,
                   mb: 1,
                 }}
@@ -406,9 +404,9 @@ export default function Dashboard() {
                 label={stat.change}
                 size="small"
                 sx={{
-                  background: stat.trend === 'up' ? 'rgba(76, 175, 80, 0.2)' : 'rgba(244, 67, 54, 0.2)',
+                  background: stat.trend === 'up' ? '#e8f5e8' : '#ffebee',
                   color: stat.trend === 'up' ? '#4caf50' : '#f44336',
-                  border: stat.trend === 'up' ? '1px solid rgba(76, 175, 80, 0.3)' : '1px solid rgba(244, 67, 54, 0.3)',
+                  border: stat.trend === 'up' ? '1px solid #4caf50' : '1px solid #f44336',
                 }}
                 icon={stat.trend === 'up' ? <TrendingUp /> : <TrendingDown />}
               />

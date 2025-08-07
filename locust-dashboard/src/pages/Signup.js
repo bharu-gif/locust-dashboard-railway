@@ -87,7 +87,13 @@ export default function Signup() {
     try {
       const result = await signup(formData.email, formData.password, formData.full_name);
       if (result.success) {
-        navigate('/dashboard');
+        // Redirect to login page after successful signup
+        navigate('/login', { 
+          state: { 
+            message: result.message || 'Account created successfully! Please login.',
+            email: formData.email 
+          }
+        });
       } else {
         // Ensure error is always a string
         const errorMsg = typeof result.error === 'string' ? result.error : 'Signup failed. Please try again.';
@@ -111,22 +117,10 @@ export default function Signup() {
         display: 'flex',
         alignItems: 'center',
         py: 4,
-        '&::before': {
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: `
-            radial-gradient(circle at 80% 20%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-            radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-            radial-gradient(circle at 60% 40%, rgba(120, 119, 198, 0.2) 0%, transparent 50%)
-          `,
-        },
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
       }}
     >
-      {/* Floating Elements */}
+      {/* Decorative Elements */}
       <Box
         sx={{
           position: 'absolute',
@@ -135,8 +129,7 @@ export default function Signup() {
           width: 120,
           height: 120,
           borderRadius: '50%',
-          background: 'rgba(255, 255, 255, 0.08)',
-          backdropFilter: 'blur(10px)',
+          background: 'rgba(255, 255, 255, 0.2)',
           animation: 'float 7s ease-in-out infinite',
           '@keyframes float': {
             '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
@@ -152,8 +145,7 @@ export default function Signup() {
           width: 80,
           height: 80,
           borderRadius: '25%',
-          background: 'rgba(255, 255, 255, 0.06)',
-          backdropFilter: 'blur(10px)',
+          background: 'rgba(255, 255, 255, 0.2)',
           animation: 'float 9s ease-in-out infinite reverse',
           '@keyframes float': {
             '0%, 100%': { transform: 'translateY(0px)' },
@@ -165,13 +157,12 @@ export default function Signup() {
       <Container maxWidth="sm">
         <Fade in timeout={800}>
           <Paper
-            elevation={0}
+            elevation={3}
             sx={{
               p: 6,
               borderRadius: 4,
-              background: 'rgba(255, 255, 255, 0.1)',
-              backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
+              background: 'white',
+              border: '1px solid #e0e0e0',
               boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
               position: 'relative',
               overflow: 'hidden',
@@ -226,7 +217,7 @@ export default function Signup() {
               <Typography
                 variant="body1"
                 sx={{
-                  color: 'rgba(255, 255, 255, 0.8)',
+                  color: '#666',
                   fontWeight: 400,
                 }}
               >
@@ -241,10 +232,9 @@ export default function Signup() {
                   sx={{ 
                     mb: 3,
                     borderRadius: 2,
-                    background: 'rgba(244, 67, 54, 0.1)',
-                    backdropFilter: 'blur(10px)',
-                    border: '1px solid rgba(244, 67, 54, 0.2)',
-                    color: 'white',
+                    background: '#ffebee',
+                    border: '1px solid #f44336',
+                    color: '#d32f2f',
                   }}
                 >
                   {typeof error === 'string' ? error : 'An error occurred. Please try again.'}
@@ -263,22 +253,21 @@ export default function Signup() {
                 sx={{
                   mb: 3,
                   '& .MuiOutlinedInput-root': {
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    backdropFilter: 'blur(10px)',
+                    background: 'white',
                     borderRadius: 2,
-                    color: 'white',
+                    color: '#333',
                     '& fieldset': {
-                      borderColor: 'rgba(255, 255, 255, 0.3)',
+                      borderColor: '#ccc',
                     },
                     '&:hover fieldset': {
-                      borderColor: 'rgba(255, 255, 255, 0.5)',
+                      borderColor: '#999',
                     },
                     '&.Mui-focused fieldset': {
                       borderColor: '#764ba2',
                     },
                   },
                   '& .MuiInputLabel-root': {
-                    color: 'rgba(255, 255, 255, 0.8)',
+                    color: '#666',
                     '&.Mui-focused': {
                       color: '#764ba2',
                     },
@@ -287,7 +276,7 @@ export default function Signup() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Person sx={{ color: 'rgba(255, 255, 255, 0.7)' }} />
+                      <Person sx={{ color: '#666' }} />
                     </InputAdornment>
                   ),
                 }}
@@ -304,22 +293,21 @@ export default function Signup() {
                 sx={{
                   mb: 3,
                   '& .MuiOutlinedInput-root': {
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    backdropFilter: 'blur(10px)',
+                    background: 'white',
                     borderRadius: 2,
-                    color: 'white',
+                    color: '#333',
                     '& fieldset': {
-                      borderColor: 'rgba(255, 255, 255, 0.3)',
+                      borderColor: '#ccc',
                     },
                     '&:hover fieldset': {
-                      borderColor: 'rgba(255, 255, 255, 0.5)',
+                      borderColor: '#999',
                     },
                     '&.Mui-focused fieldset': {
                       borderColor: '#764ba2',
                     },
                   },
                   '& .MuiInputLabel-root': {
-                    color: 'rgba(255, 255, 255, 0.8)',
+                    color: '#666',
                     '&.Mui-focused': {
                       color: '#764ba2',
                     },
@@ -328,7 +316,7 @@ export default function Signup() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Email sx={{ color: 'rgba(255, 255, 255, 0.7)' }} />
+                      <Email sx={{ color: '#666' }} />
                     </InputAdornment>
                   ),
                 }}
@@ -345,22 +333,21 @@ export default function Signup() {
                 sx={{
                   mb: 3,
                   '& .MuiOutlinedInput-root': {
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    backdropFilter: 'blur(10px)',
+                    background: 'white',
                     borderRadius: 2,
-                    color: 'white',
+                    color: '#333',
                     '& fieldset': {
-                      borderColor: 'rgba(255, 255, 255, 0.3)',
+                      borderColor: '#ccc',
                     },
                     '&:hover fieldset': {
-                      borderColor: 'rgba(255, 255, 255, 0.5)',
+                      borderColor: '#999',
                     },
                     '&.Mui-focused fieldset': {
                       borderColor: '#764ba2',
                     },
                   },
                   '& .MuiInputLabel-root': {
-                    color: 'rgba(255, 255, 255, 0.8)',
+                    color: '#666',
                     '&.Mui-focused': {
                       color: '#764ba2',
                     },
