@@ -7,18 +7,22 @@ from datetime import datetime
 
 # Database URL - Use environment variables for security
 DATABASE_URL = os.getenv(
-    "DATABASE_URL", 
-    "mysql+pymysql://localhost:3306/defaultdb"  # Default fallback for local development
+    "DATABASE_URL",
+    "sqlite:///./test.db"  # Default fallback for local development
 )
 
 # Ensure the URL uses pymysql driver
-if DATABASE_URL.startswith("mysql://"):
+if DATABASE_URL and DATABASE_URL.startswith("mysql://"):
     DATABASE_URL = DATABASE_URL.replace("mysql://", "mysql+pymysql://", 1)
 
 # For async operations
-ASYNC_DATABASE_URL = DATABASE_URL.replace("mysql+pymysql://", "mysql+aiomysql://")
+if DATABASE_URL.startswith("mysql+pymysql://"):
+    ASYNC_DATABASE_URL = DATABASE_URL.replace("mysql+pymysql://", "mysql+aiomysql://")
+else:
+    # For SQLite, use the same URL
+    ASYNC_DATABASE_URL = DATABASE_URL
 
-print(f"Database URL (masked): {DATABASE_URL.split('@')[0]}@***")
+print(f"Database URL (masked): {DATABASE_URL.split('@')[0] if '@' in DATABASE_URL else DATABASE_URL}@***")
 
 # Create database instance
 database = Database(ASYNC_DATABASE_URL)

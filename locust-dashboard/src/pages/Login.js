@@ -49,9 +49,12 @@ export default function Login() {
       if (result.success) {
         navigate('/dashboard');
       } else {
-        setError(result.error || 'Invalid credentials. Please try again.');
+        // Ensure error is always a string
+        const errorMsg = typeof result.error === 'string' ? result.error : 'Invalid credentials. Please try again.';
+        setError(errorMsg);
       }
     } catch (err) {
+      console.error('Login catch error:', err);
       setError('Invalid credentials. Please try again.');
     } finally {
       setIsLoading(false);
@@ -123,7 +126,7 @@ export default function Login() {
                   borderRadius: 2,
                 }}
               >
-                {error}
+                {typeof error === 'string' ? error : 'An error occurred. Please try again.'}
               </Alert>
             )}
 

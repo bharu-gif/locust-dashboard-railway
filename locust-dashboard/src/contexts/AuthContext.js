@@ -6,8 +6,44 @@ const AuthContext = createContext();
 // Configure API base URL based on environment
 const API_BASE_URL = process.env.REACT_APP_API_URL || 
   (process.env.NODE_ENV === 'production' 
-    ? 'https://locust-dashboard-railway-production.up.railway.app' 
+    ? 'https://your-railway-app-name.railway.app' 
     : 'http://localhost:8000');
+
+// Utility function to safely extract error messages
+const extractErrorMessage = (error) => {
+  if (typeof error === 'string') {
+    return error;
+  }
+  
+  if (error?.response?.data) {
+    const data = error.response.data;
+    
+    // Handle FastAPI validation errors (array format)
+    if (Array.isArray(data)) {
+      return data.map(err => err.msg || err.message || 'Invalid input').join(', ');
+    }
+    
+    // Handle FastAPI HTTPException with detail
+    if (data.detail) {
+      if (typeof data.detail === 'string') {
+        return data.detail;
+      }
+      if (Array.isArray(data.detail)) {
+        return data.detail.map(err => 
+          typeof err === 'string' ? err : (err.msg || err.message || 'Invalid input')
+        ).join(', ');
+      }
+    }
+    
+    // Handle other message formats
+    if (data.message) {
+      return typeof data.message === 'string' ? data.message : 'An error occurred';
+    }
+  }
+  
+  // Fallback to error message or default
+  return error?.message || 'An unexpected error occurred';
+};
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -47,6 +83,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       console.log('Attempting login with:', { email, apiUrl: API_BASE_URL });
+      console.log('Full API URL:', `${API_BASE_URL}/api/login`);
       
       const response = await axios.post(`${API_BASE_URL}/api/login`, { 
         email, 
@@ -71,9 +108,20 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       console.error('Login error:', error);
       console.error('Error response:', error.response);
+      console.error('Error message:', error.message);
+      console.error('Error code:', error.code);
+      
+      // Check for network errors specifically
+      if (error.code === 'NETWORK_ERROR' || error.message.includes('Network Error')) {
+        return { 
+          success: false, 
+          error: 'Unable to connect to server. Please check if the backend is running.'
+        };
+      }
+      
       return { 
         success: false, 
-        error: error.response?.data?.detail || 'Login failed' 
+        error: extractErrorMessage(error) || 'Login failed'
       };
     }
   };
@@ -81,6 +129,7 @@ export const AuthProvider = ({ children }) => {
   const signup = async (email, password, full_name) => {
     try {
       console.log('Attempting signup with:', { email, full_name, apiUrl: API_BASE_URL });
+      console.log('Full API URL:', `${API_BASE_URL}/api/signup`);
       
       await axios.post(`${API_BASE_URL}/api/signup`, { 
         email, 
@@ -92,9 +141,21 @@ export const AuthProvider = ({ children }) => {
       return await login(email, password);
     } catch (error) {
       console.error('Signup error:', error);
+      console.error('Error response:', error.response);
+      console.error('Error message:', error.message);
+      console.error('Error code:', error.code);
+      
+      // Check for network errors specifically
+      if (error.code === 'NETWORK_ERROR' || error.message.includes('Network Error')) {
+        return { 
+          success: false, 
+          error: 'Unable to connect to server. Please check if the backend is running.'
+        };
+      }
+      
       return { 
         success: false, 
-        error: error.response?.data?.detail || 'Signup failed' 
+        error: extractErrorMessage(error) || 'Signup failed'
       };
     }
   };

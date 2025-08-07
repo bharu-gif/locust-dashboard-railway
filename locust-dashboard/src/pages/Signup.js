@@ -89,9 +89,12 @@ export default function Signup() {
       if (result.success) {
         navigate('/dashboard');
       } else {
-        setError(result.error || 'Signup failed. Please try again.');
+        // Ensure error is always a string
+        const errorMsg = typeof result.error === 'string' ? result.error : 'Signup failed. Please try again.';
+        setError(errorMsg);
       }
     } catch (err) {
+      console.error('Signup catch error:', err);
       setError('Signup failed. Please try again.');
     } finally {
       setIsLoading(false);
@@ -244,7 +247,7 @@ export default function Signup() {
                     color: 'white',
                   }}
                 >
-                  {error}
+                  {typeof error === 'string' ? error : 'An error occurred. Please try again.'}
                 </Alert>
               </Slide>
             )}
