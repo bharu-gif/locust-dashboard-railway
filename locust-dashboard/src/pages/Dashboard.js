@@ -27,6 +27,27 @@ import {
   Stack,
   useTheme,
   alpha,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  DialogContentText,
+  CircularProgress,
+  Tooltip,
+  Skeleton,
+  Container,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Switch,
+  FormControlLabel,
+  Tabs,
+  Tab,
+  Alert,
+  Snackbar,
 } from '@mui/material';
 import {
   Dashboard as DashboardIcon,
@@ -43,15 +64,27 @@ import {
   CheckCircle,
   Settings,
   ExitToApp,
-  Menu,
+  BugReport,
+  Memory,
+  Storage,
+  NetworkCheck,
+  CloudUpload,
+  Assessment,
+  ShowChart,
   Notifications,
+  Security,
+  Api,
+  Code,
+  Psychology,
+  Analytics,
+  MonitorHeart,
+  FlashOn,
+  RocketLaunch,
+  Menu,
   Search,
   BarChart as BarChartIcon,
-  Assessment,
-  Storage,
   Computer,
   CloudQueue,
-  Security,
   AccountCircle,
   MoreVert,
 } from '@mui/icons-material';
@@ -61,7 +94,7 @@ import {
   CartesianGrid,
   XAxis,
   YAxis,
-  Tooltip,
+  Tooltip as RechartsTooltip,
   Legend,
   ResponsiveContainer,
   AreaChart,
@@ -82,35 +115,59 @@ export default function Dashboard() {
   const [isRunning, setIsRunning] = useState(false);
   const [animate, setAnimate] = useState(false);
   const [selectedMenu, setSelectedMenu] = useState('dashboard');
+  const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
+  const [currentTab, setCurrentTab] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   useEffect(() => {
     setAnimate(true);
+    // Simulate loading data
+    setIsLoading(true);
+    setTimeout(() => setIsLoading(false), 1500);
   }, []);
 
   const handleLogout = () => {
-    logout();
-    navigate('/login');
+    setLogoutDialogOpen(true);
   };
 
-  // Mock real-time data
+  const confirmLogout = () => {
+    logout();
+    navigate('/login');
+    setLogoutDialogOpen(false);
+  };
+
+  const cancelLogout = () => {
+    setLogoutDialogOpen(false);
+  };
+
+  const handleStartTest = () => {
+    setIsRunning(!isRunning);
+    setSnackbarMessage(isRunning ? 'Load test stopped' : 'Load test started');
+    setSnackbarOpen(true);
+  };
+
+  // Enhanced real-time data with more comprehensive metrics
   const [realtimeData, setRealtimeData] = useState([
-    { time: '10:00', users: 45, responseTime: 245, rps: 1200, errors: 2 },
-    { time: '10:05', users: 52, responseTime: 267, rps: 1150, errors: 1 },
-    { time: '10:10', users: 68, responseTime: 189, rps: 1300, errors: 0 },
-    { time: '10:15', users: 85, responseTime: 312, rps: 1100, errors: 5 },
-    { time: '10:20', users: 93, responseTime: 278, rps: 1250, errors: 2 },
-    { time: '10:25', users: 100, responseTime: 234, rps: 1280, errors: 1 },
+    { time: '10:00', users: 45, responseTime: 245, rps: 1200, errors: 2, cpuUsage: 45, memoryUsage: 62 },
+    { time: '10:05', users: 52, responseTime: 267, rps: 1150, errors: 1, cpuUsage: 52, memoryUsage: 65 },
+    { time: '10:10', users: 68, responseTime: 189, rps: 1300, errors: 0, cpuUsage: 38, memoryUsage: 58 },
+    { time: '10:15', users: 85, responseTime: 312, rps: 1100, errors: 5, cpuUsage: 72, memoryUsage: 78 },
+    { time: '10:20', users: 93, responseTime: 278, rps: 1250, errors: 2, cpuUsage: 68, memoryUsage: 71 },
+    { time: '10:25', users: 100, responseTime: 234, rps: 1280, errors: 1, cpuUsage: 55, memoryUsage: 69 },
   ]);
 
-  const stats = [
+  const performanceMetrics = [
     {
-      title: 'Active Users',
+      title: 'Active Virtual Users',
       value: '1,247',
       change: '+12.5%',
       trend: 'up',
       icon: People,
       color: '#667eea',
       gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      description: 'Concurrent simulated users',
     },
     {
       title: 'Avg Response Time',
@@ -120,36 +177,89 @@ export default function Dashboard() {
       icon: Speed,
       color: '#4ecdc4',
       gradient: 'linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%)',
+      description: 'Server response latency',
     },
     {
       title: 'Requests/sec',
       value: '1,280',
       change: '+15.3%',
       trend: 'up',
-      icon: TrendingUp,
+      icon: FlashOn,
       color: '#45b7d1',
       gradient: 'linear-gradient(135deg, #45b7d1 0%, #2196f3 100%)',
+      description: 'Request throughput',
     },
     {
       title: 'Error Rate',
       value: '0.1%',
       change: '-2.1%',
       trend: 'down',
-      icon: Warning,
+      icon: BugReport,
       color: '#ff6b6b',
       gradient: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%)',
+      description: 'Failed requests percentage',
+    },
+    {
+      title: 'CPU Usage',
+      value: '65%',
+      change: '+3.2%',
+      trend: 'up',
+      icon: Memory,
+      color: '#f39c12',
+      gradient: 'linear-gradient(135deg, #f39c12 0%, #e67e22 100%)',
+      description: 'Server CPU utilization',
+    },
+    {
+      title: 'Network I/O',
+      value: '124 MB/s',
+      change: '+18.7%',
+      trend: 'up',
+      icon: NetworkCheck,
+      color: '#9b59b6',
+      gradient: 'linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%)',
+      description: 'Network bandwidth usage',
     },
   ];
 
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: DashboardIcon },
-    { id: 'tests', label: 'Load Tests', icon: Assessment },
-    { id: 'reports', label: 'Reports', icon: BarChartIcon },
-    { id: 'metrics', label: 'Real-time Metrics', icon: Timeline },
-    { id: 'infrastructure', label: 'Infrastructure', icon: Computer },
-    { id: 'monitoring', label: 'Monitoring', icon: CloudQueue },
-    { id: 'security', label: 'Security', icon: Security },
-    { id: 'storage', label: 'Data Storage', icon: Storage },
+    { id: 'dashboard', label: 'Overview', icon: DashboardIcon, badge: null },
+    { id: 'tests', label: 'Load Tests', icon: RocketLaunch, badge: '3' },
+    { id: 'reports', label: 'Analytics', icon: Analytics, badge: null },
+    { id: 'metrics', label: 'Real-time', icon: MonitorHeart, badge: '!' },
+    { id: 'performance', label: 'Performance', icon: Assessment, badge: null },
+    { id: 'api', label: 'API Testing', icon: Api, badge: '2' },
+    { id: 'security', label: 'Security', icon: Security, badge: null },
+    { id: 'infrastructure', label: 'Infrastructure', icon: CloudUpload, badge: null },
+  ];
+
+  const testSuites = [
+    {
+      name: 'User Authentication Flow',
+      status: 'running',
+      duration: '00:15:32',
+      users: 500,
+      progress: 65,
+      icon: Security,
+      color: '#4caf50'
+    },
+    {
+      name: 'Payment Gateway Stress Test',
+      status: 'completed',
+      duration: '01:23:45',
+      users: 1000,
+      progress: 100,
+      icon: Assessment,
+      color: '#2196f3'
+    },
+    {
+      name: 'API Endpoint Load Test',
+      status: 'queued',
+      duration: '00:00:00',
+      users: 750,
+      progress: 0,
+      icon: Api,
+      color: '#ff9800'
+    },
   ];
 
   const Sidebar = () => (
@@ -163,22 +273,25 @@ export default function Dashboard() {
         '& .MuiDrawer-paper': {
           width: drawerWidth,
           boxSizing: 'border-box',
-          background: 'linear-gradient(180deg, #1a1a2e 0%, #16213e 100%)',
+          background: 'white',
           border: 'none',
-          backdropFilter: 'blur(20px)',
+          borderRight: '1px solid #e2e8f0',
+          boxShadow: '4px 0 12px rgba(0, 0, 0, 0.05)',
         },
       }}
     >
-      <Box sx={{ p: 3, textAlign: 'center' }}>
+      {/* User Profile Section */}
+      <Box sx={{ p: 3, textAlign: 'center', borderBottom: '1px solid #e2e8f0' }}>
         <Avatar
           sx={{
-            width: 60,
-            height: 60,
+            width: 70,
+            height: 70,
             mx: 'auto',
             mb: 2,
             background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            fontSize: '1.5rem',
+            fontSize: '1.8rem',
             fontWeight: 'bold',
+            boxShadow: '0 4px 12px rgba(102, 126, 234, 0.2)',
           }}
         >
           {user?.full_name?.charAt(0) || user?.email?.charAt(0) || 'U'}
@@ -186,8 +299,8 @@ export default function Dashboard() {
         <Typography
           variant="h6"
           sx={{
-            color: 'white',
-            fontWeight: 600,
+            color: '#1e293b',
+            fontWeight: 700,
             mb: 0.5,
           }}
         >
@@ -196,16 +309,25 @@ export default function Dashboard() {
         <Typography
           variant="body2"
           sx={{
-            color: '#ccc',
-            mb: 2,
+            color: '#64748b',
+            mb: 1,
           }}
         >
-          Load Testing Dashboard
+          Performance Engineer
         </Typography>
+        <Chip
+          label="Pro Plan"
+          size="small"
+          sx={{
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            color: 'white',
+            fontWeight: 600,
+            fontSize: '0.7rem',
+          }}
+        />
       </Box>
 
-      <Divider sx={{ borderColor: '#555', mx: 2 }} />
-
+      {/* Navigation Menu */}
       <List sx={{ px: 2, py: 2 }}>
         {menuItems.map((item) => (
           <ListItemButton
@@ -215,21 +337,24 @@ export default function Dashboard() {
             sx={{
               borderRadius: 2,
               mb: 1,
+              py: 1.5,
               '&.Mui-selected': {
                 background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                boxShadow: '0 4px 20px rgba(102, 126, 234, 0.3)',
                 '&:hover': {
                   background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                 },
               },
               '&:hover': {
-                background: '#555',
+                background: 'rgba(255, 255, 255, 0.05)',
               },
+              transition: 'all 0.3s ease',
             }}
           >
             <ListItemIcon
               sx={{
-                color: selectedMenu === item.id ? 'white' : '#ccc',
-                minWidth: 40,
+                color: selectedMenu === item.id ? 'white' : '#8892b0',
+                minWidth: 45,
               }}
             >
               <item.icon />
@@ -238,35 +363,123 @@ export default function Dashboard() {
               primary={item.label}
               sx={{
                 '& .MuiListItemText-primary': {
-                  color: selectedMenu === item.id ? 'white' : '#ddd',
-                  fontWeight: selectedMenu === item.id ? 600 : 400,
+                  color: selectedMenu === item.id ? 'white' : '#ccd6f6',
+                  fontWeight: selectedMenu === item.id ? 600 : 500,
+                  fontSize: '0.95rem',
                 },
               }}
             />
+            {item.badge && (
+              <Badge 
+                badgeContent={item.badge} 
+                color={item.badge === '!' ? 'error' : 'primary'}
+                sx={{
+                  '& .MuiBadge-badge': {
+                    fontSize: '0.7rem',
+                    minWidth: '18px',
+                    height: '18px',
+                  }
+                }}
+              />
+            )}
           </ListItemButton>
         ))}
       </List>
 
+      {/* Test Status Section */}
+      <Box sx={{ mx: 2, mb: 2 }}>
+        <Typography
+          variant="subtitle2"
+          sx={{
+            color: '#8892b0',
+            fontWeight: 600,
+            mb: 2,
+            px: 2,
+          }}
+        >
+          Active Tests
+        </Typography>
+        <Stack spacing={1}>
+          {testSuites.slice(0, 2).map((test, index) => (
+            <Paper
+              key={index}
+              sx={{
+                p: 2,
+                background: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: 2,
+              }}
+            >
+              <Box display="flex" alignItems="center" mb={1}>
+                <test.icon sx={{ color: test.color, fontSize: 18, mr: 1 }} />
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: 'white',
+                    fontWeight: 600,
+                    flexGrow: 1,
+                  }}
+                >
+                  {test.name.substring(0, 20)}...
+                </Typography>
+              </Box>
+              <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+                <Chip
+                  label={test.status}
+                  size="small"
+                  sx={{
+                    background: test.status === 'running' ? 'rgba(76, 175, 80, 0.2)' : 
+                               test.status === 'completed' ? 'rgba(33, 150, 243, 0.2)' : 
+                               'rgba(255, 152, 0, 0.2)',
+                    color: test.status === 'running' ? '#4caf50' : 
+                           test.status === 'completed' ? '#2196f3' : '#ff9800',
+                    fontSize: '0.7rem',
+                  }}
+                />
+                <Typography variant="caption" sx={{ color: '#8892b0' }}>
+                  {test.users} users
+                </Typography>
+              </Box>
+              <LinearProgress
+                variant="determinate"
+                value={test.progress}
+                sx={{
+                  height: 4,
+                  borderRadius: 2,
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  '& .MuiLinearProgress-bar': {
+                    background: test.color,
+                    borderRadius: 2,
+                  },
+                }}
+              />
+            </Paper>
+          ))}
+        </Stack>
+      </Box>
+
+      {/* Bottom Actions */}
       <Box sx={{ mt: 'auto', p: 2 }}>
-        <Divider sx={{ borderColor: '#555', mb: 2 }} />
+        <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.1)', mb: 2 }} />
         <ListItemButton
           onClick={() => setSelectedMenu('settings')}
           sx={{
             borderRadius: 2,
             mb: 1,
             '&:hover': {
-              background: '#555',
+              background: 'rgba(255, 255, 255, 0.05)',
             },
           }}
         >
-          <ListItemIcon sx={{ color: '#ccc', minWidth: 40 }}>
+          <ListItemIcon sx={{ color: '#8892b0', minWidth: 40 }}>
             <Settings />
           </ListItemIcon>
           <ListItemText
             primary="Settings"
             sx={{
               '& .MuiListItemText-primary': {
-                color: '#ddd',
+                color: '#ccd6f6',
+                fontSize: '0.95rem',
               },
             }}
           />
@@ -276,7 +489,7 @@ export default function Dashboard() {
           sx={{
             borderRadius: 2,
             '&:hover': {
-              background: '#d32f2f',
+              background: 'rgba(244, 67, 54, 0.1)',
             },
           }}
         >
@@ -288,6 +501,7 @@ export default function Dashboard() {
             sx={{
               '& .MuiListItemText-primary': {
                 color: '#ff5252',
+                fontSize: '0.95rem',
               },
             }}
           />
@@ -302,50 +516,127 @@ export default function Dashboard() {
       sx={{
         width: sidebarOpen ? `calc(100% - ${drawerWidth}px)` : '100%',
         ml: sidebarOpen ? `${drawerWidth}px` : 0,
-        background: '#1976d2',
-        border: '1px solid #e0e0e0',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        background: 'white',
+        boxShadow: '0 2px 12px rgba(0, 0, 0, 0.08)',
+        borderBottom: '1px solid #e2e8f0',
         transition: theme.transitions.create(['margin', 'width'], {
           easing: theme.transitions.easing.sharp,
           duration: theme.transitions.duration.leavingScreen,
         }),
       }}
     >
-      <Toolbar>
+      <Toolbar sx={{ py: 1 }}>
         <IconButton
           color="inherit"
           aria-label="toggle drawer"
           onClick={() => setSidebarOpen(!sidebarOpen)}
           edge="start"
-          sx={{ mr: 2, color: 'white' }}
+          sx={{ 
+            mr: 2, 
+            color: '#64748b',
+            background: '#f1f5f9',
+            '&:hover': {
+              background: '#e2e8f0',
+            }
+          }}
         >
           <Menu />
         </IconButton>
 
-        <Typography
-          variant="h6"
-          component="div"
-          sx={{
-            flexGrow: 1,
-            color: 'white',
-            fontWeight: 600,
-          }}
-        >
-          Load Testing Dashboard
-        </Typography>
+        <Box sx={{ flexGrow: 1 }}>
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{
+              color: '#1e293b',
+              fontWeight: 700,
+            }}
+          >
+            🚀 Locust Performance Dashboard
+          </Typography>
+          <Typography
+            variant="caption"
+            sx={{
+              color: '#64748b',
+              fontWeight: 500,
+            }}
+          >
+            Real-time Load Testing & Performance Monitoring
+          </Typography>
+        </Box>
 
         <Stack direction="row" spacing={1} alignItems="center">
-          <IconButton sx={{ color: 'white' }}>
+          {/* Status Indicator */}
+          <Chip
+            label={isRunning ? 'Test Running' : 'Ready'}
+            size="small"
+            sx={{
+              background: isRunning ? '#dcfce7' : '#f1f5f9',
+              color: isRunning ? '#16a34a' : '#64748b',
+              border: `1px solid ${isRunning ? '#bbf7d0' : '#e2e8f0'}`,
+              fontWeight: 600,
+            }}
+            icon={isRunning ? <PlayArrow /> : <CheckCircle />}
+          />
+          
+          <IconButton 
+            sx={{ 
+              color: 'white',
+              background: 'rgba(255, 255, 255, 0.1)',
+              '&:hover': {
+                background: 'rgba(255, 255, 255, 0.2)',
+              }
+            }}
+          >
             <Search />
           </IconButton>
-          <IconButton sx={{ color: 'white' }}>
-            <Badge badgeContent={4} color="error">
+          
+          <IconButton 
+            sx={{ 
+              color: 'white',
+              background: 'rgba(255, 255, 255, 0.1)',
+              '&:hover': {
+                background: 'rgba(255, 255, 255, 0.2)',
+              }
+            }}
+          >
+            <Badge badgeContent={3} color="error">
               <Notifications />
             </Badge>
           </IconButton>
-          <IconButton sx={{ color: 'white' }}>
+          
+          <IconButton 
+            sx={{ 
+              color: 'white',
+              background: 'rgba(255, 255, 255, 0.1)',
+              '&:hover': {
+                background: 'rgba(255, 255, 255, 0.2)',
+              }
+            }}
+          >
             <AccountCircle />
           </IconButton>
+          
+          <Button
+            onClick={handleLogout}
+            variant="outlined"
+            size="small"
+            startIcon={<ExitToApp />}
+            sx={{
+              color: 'white',
+              borderColor: 'rgba(255, 255, 255, 0.3)',
+              background: 'rgba(255, 255, 255, 0.1)',
+              '&:hover': {
+                borderColor: 'rgba(244, 67, 54, 0.5)',
+                background: 'rgba(244, 67, 54, 0.1)',
+                color: '#ff5252',
+              },
+              textTransform: 'none',
+              fontWeight: 600,
+            }}
+          >
+            Logout
+          </Button>
         </Stack>
       </Toolbar>
     </AppBar>
@@ -357,10 +648,11 @@ export default function Dashboard() {
         sx={{
           height: '100%',
           background: 'white',
-          border: '1px solid #e0e0e0',
+          border: '1px solid #e2e8f0',
           borderRadius: 3,
           position: 'relative',
           overflow: 'hidden',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
           '&::before': {
             content: '""',
             position: 'absolute',
@@ -372,20 +664,24 @@ export default function Dashboard() {
           },
           '&:hover': {
             transform: 'translateY(-4px)',
-            boxShadow: '0 12px 40px rgba(0, 0, 0, 0.15)',
+            boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)',
+            borderColor: '#cbd5e1',
           },
           transition: 'all 0.3s ease',
         }}
       >
         <CardContent sx={{ p: 3 }}>
-          <Box display="flex" justifyContent="space-between" alignItems="flex-start">
+          <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={2}>
             <Box>
               <Typography
                 variant="body2"
                 sx={{
-                  color: '#666',
+                  color: '#64748b',
                   mb: 1,
-                  fontWeight: 500,
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px',
+                  fontSize: '0.75rem',
                 }}
               >
                 {stat.title}
@@ -393,35 +689,57 @@ export default function Dashboard() {
               <Typography
                 variant="h4"
                 sx={{
-                  color: '#333',
-                  fontWeight: 700,
+                  color: '#1e293b',
+                  fontWeight: 800,
                   mb: 1,
                 }}
               >
                 {stat.value}
               </Typography>
-              <Chip
-                label={stat.change}
-                size="small"
-                sx={{
-                  background: stat.trend === 'up' ? '#e8f5e8' : '#ffebee',
-                  color: stat.trend === 'up' ? '#4caf50' : '#f44336',
-                  border: stat.trend === 'up' ? '1px solid #4caf50' : '1px solid #f44336',
-                }}
-                icon={stat.trend === 'up' ? <TrendingUp /> : <TrendingDown />}
-              />
+              <Box display="flex" alignItems="center" gap={1}>
+                <Chip
+                  label={stat.change}
+                  size="small"
+                  sx={{
+                    background: stat.trend === 'up' 
+                      ? '#dcfce7' 
+                      : '#fee2e2',
+                    color: stat.trend === 'up' ? '#4caf50' : '#f44336',
+                    border: `1px solid ${stat.trend === 'up' ? 'rgba(76, 175, 80, 0.3)' : 'rgba(244, 67, 54, 0.3)'}`,
+                    fontWeight: 700,
+                    fontSize: '0.7rem',
+                  }}
+                  icon={stat.trend === 'up' ? <TrendingUp /> : <TrendingDown />}
+                />
+              </Box>
             </Box>
             <Avatar
               sx={{
-                width: 60,
-                height: 60,
+                width: 70,
+                height: 70,
                 background: stat.gradient,
-                boxShadow: `0 8px 32px ${stat.color}40`,
+                boxShadow: `0 12px 40px ${stat.color}40`,
+                animation: isLoading ? 'pulse 2s infinite' : 'none',
+                '@keyframes pulse': {
+                  '0%': { transform: 'scale(1)' },
+                  '50%': { transform: 'scale(1.05)' },
+                  '100%': { transform: 'scale(1)' },
+                },
               }}
             >
-              <stat.icon sx={{ fontSize: 30, color: 'white' }} />
+              <stat.icon sx={{ fontSize: 32, color: 'white' }} />
             </Avatar>
           </Box>
+          
+          <Typography
+            variant="caption"
+            sx={{
+              color: 'rgba(255, 255, 255, 0.6)',
+              fontStyle: 'italic',
+            }}
+          >
+            {stat.description}
+          </Typography>
         </CardContent>
       </Card>
     </Zoom>
@@ -464,21 +782,8 @@ export default function Dashboard() {
     <Box
       sx={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: '#f8fafc',
         position: 'relative',
-        '&::before': {
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: `
-            radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-            radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-            radial-gradient(circle at 40% 40%, rgba(120, 119, 198, 0.2) 0%, transparent 50%)
-          `,
-        },
       }}
     >
       <TopBar />
@@ -491,7 +796,7 @@ export default function Dashboard() {
           flexGrow: 1,
           p: 3,
           ml: sidebarOpen ? `${drawerWidth}px` : 0,
-          mt: '64px',
+          mt: '80px',
           transition: theme.transitions.create(['margin'], {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen,
@@ -500,262 +805,530 @@ export default function Dashboard() {
       >
         {/* Header Section */}
         <Fade in timeout={500}>
-          <Box sx={{ mb: 4 }}>
-            <Typography
-              variant="h4"
-              sx={{
-                color: 'white',
-                fontWeight: 700,
-                mb: 1,
-              }}
-            >
-              Welcome back, {user?.full_name?.split(' ')[0] || 'User'}! 👋
-            </Typography>
-            <Typography
-              variant="body1"
-              sx={{
-                color: 'rgba(255, 255, 255, 0.8)',
-                mb: 3,
-              }}
-            >
-              Monitor your load testing performance and system metrics
-            </Typography>
+          <Container maxWidth="xl" sx={{ mb: 4 }}>
+            <Box textAlign="center" mb={4}>
+              <Typography
+                variant="h3"
+                sx={{
+                  color: 'white',
+                  fontWeight: 800,
+                  mb: 2,
+                  background: 'linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.8) 100%)',
+                  backgroundClip: 'text',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                }}
+              >
+                Welcome back, {user?.full_name?.split(' ')[0] || 'User'}! 🚀
+              </Typography>
+              <Typography
+                variant="h6"
+                sx={{
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  mb: 4,
+                  fontWeight: 400,
+                }}
+              >
+                Monitor your performance testing in real-time with advanced analytics
+              </Typography>
 
-            {/* Action Buttons */}
-            <Stack direction="row" spacing={2} flexWrap="wrap">
-              <ActionButton
-                icon={isRunning ? Stop : PlayArrow}
-                label={isRunning ? 'Stop Test' : 'Start Load Test'}
-                primary
-                onClick={() => setIsRunning(!isRunning)}
-              />
-              <ActionButton icon={Refresh} label="Refresh Data" />
-              <ActionButton icon={Timeline} label="View Reports" />
-              <ActionButton icon={Settings} label="Configure Tests" />
-            </Stack>
-          </Box>
+              {/* Action Buttons */}
+              <Stack 
+                direction={{ xs: 'column', sm: 'row' }} 
+                spacing={2} 
+                justifyContent="center"
+                alignItems="center"
+              >
+                <Button
+                  variant="contained"
+                  size="large"
+                  startIcon={isRunning ? <Stop /> : <RocketLaunch />}
+                  onClick={handleStartTest}
+                  sx={{
+                    borderRadius: 3,
+                    py: 1.5,
+                    px: 4,
+                    background: isRunning 
+                      ? 'linear-gradient(135deg, #f44336 0%, #d32f2f 100%)'
+                      : 'linear-gradient(135deg, #4caf50 0%, #388e3c 100%)',
+                    boxShadow: isRunning 
+                      ? '0 8px 32px rgba(244, 67, 54, 0.4)'
+                      : '0 8px 32px rgba(76, 175, 80, 0.4)',
+                    fontWeight: 700,
+                    textTransform: 'none',
+                    fontSize: '1.1rem',
+                    '&:hover': {
+                      transform: 'translateY(-2px)',
+                      boxShadow: isRunning 
+                        ? '0 12px 40px rgba(244, 67, 54, 0.5)'
+                        : '0 12px 40px rgba(76, 175, 80, 0.5)',
+                    },
+                    transition: 'all 0.3s ease',
+                  }}
+                >
+                  {isRunning ? 'Stop Load Test' : 'Start Load Test'}
+                </Button>
+                
+                <Button
+                  variant="outlined"
+                  size="large"
+                  startIcon={<Timeline />}
+                  sx={{
+                    borderRadius: 3,
+                    py: 1.5,
+                    px: 4,
+                    color: 'white',
+                    borderColor: 'rgba(255, 255, 255, 0.3)',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(10px)',
+                    fontWeight: 600,
+                    textTransform: 'none',
+                    fontSize: '1rem',
+                    '&:hover': {
+                      borderColor: 'rgba(255, 255, 255, 0.5)',
+                      background: 'rgba(255, 255, 255, 0.15)',
+                      transform: 'translateY(-2px)',
+                    },
+                    transition: 'all 0.3s ease',
+                  }}
+                >
+                  View Analytics
+                </Button>
+                
+                <Button
+                  variant="outlined"
+                  size="large"
+                  startIcon={<Assessment />}
+                  sx={{
+                    borderRadius: 3,
+                    py: 1.5,
+                    px: 4,
+                    color: 'white',
+                    borderColor: 'rgba(255, 255, 255, 0.3)',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(10px)',
+                    fontWeight: 600,
+                    textTransform: 'none',
+                    fontSize: '1rem',
+                    '&:hover': {
+                      borderColor: 'rgba(255, 255, 255, 0.5)',
+                      background: 'rgba(255, 255, 255, 0.15)',
+                      transform: 'translateY(-2px)',
+                    },
+                    transition: 'all 0.3s ease',
+                  }}
+                >
+                  Create Test
+                </Button>
+              </Stack>
+            </Box>
+          </Container>
         </Fade>
 
-        {/* Stats Grid */}
-        <Grid container spacing={3} sx={{ mb: 4 }}>
-          {stats.map((stat, index) => (
-            <Grid item xs={12} sm={6} lg={3} key={stat.title}>
-              <StatCard stat={stat} index={index} />
+        {/* Loading State */}
+        {isLoading ? (
+          <Container maxWidth="xl">
+            <Grid container spacing={3} mb={4}>
+              {[1, 2, 3, 4, 5, 6].map((item) => (
+                <Grid item xs={12} sm={6} lg={2} key={item}>
+                  <Card sx={{ 
+                    p: 3, 
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(20px)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                  }}>
+                    <Skeleton variant="text" width="60%" height={24} sx={{ bgcolor: 'rgba(255, 255, 255, 0.1)' }} />
+                    <Skeleton variant="text" width="40%" height={40} sx={{ bgcolor: 'rgba(255, 255, 255, 0.1)' }} />
+                    <Skeleton variant="rectangular" width="100%" height={20} sx={{ bgcolor: 'rgba(255, 255, 255, 0.1)' }} />
+                  </Card>
+                </Grid>
+              ))}
             </Grid>
-          ))}
-        </Grid>
-
-        {/* Charts Section */}
-        <Grid container spacing={3}>
-          {/* Real-time Metrics Chart */}
-          <Grid item xs={12} lg={8}>
-            <Slide in={animate} direction="up" timeout={800}>
-              <Paper
-                sx={{
-                  p: 3,
-                  borderRadius: 3,
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  backdropFilter: 'blur(20px)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  height: 400,
-                }}
-              >
-                <Typography
-                  variant="h6"
-                  sx={{
-                    color: 'white',
-                    fontWeight: 600,
-                    mb: 3,
-                  }}
-                >
-                  Real-time Performance Metrics
-                </Typography>
-                <ResponsiveContainer width="100%" height={300}>
-                  <AreaChart data={realtimeData}>
-                    <defs>
-                      <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#667eea" stopOpacity={0.8} />
-                        <stop offset="95%" stopColor="#667eea" stopOpacity={0.1} />
-                      </linearGradient>
-                      <linearGradient id="colorResponse" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#4ecdc4" stopOpacity={0.8} />
-                        <stop offset="95%" stopColor="#4ecdc4" stopOpacity={0.1} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)" />
-                    <XAxis dataKey="time" stroke="rgba(255, 255, 255, 0.7)" />
-                    <YAxis stroke="rgba(255, 255, 255, 0.7)" />
-                    <Tooltip
-                      contentStyle={{
-                        background: 'rgba(0, 0, 0, 0.8)',
-                        border: '1px solid rgba(255, 255, 255, 0.2)',
-                        borderRadius: '8px',
-                        color: 'white',
-                      }}
-                    />
-                    <Legend />
-                    <Area
-                      type="monotone"
-                      dataKey="users"
-                      stroke="#667eea"
-                      fillOpacity={1}
-                      fill="url(#colorUsers)"
-                      strokeWidth={3}
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="responseTime"
-                      stroke="#4ecdc4"
-                      fillOpacity={1}
-                      fill="url(#colorResponse)"
-                      strokeWidth={3}
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </Paper>
-            </Slide>
+          </Container>
+        ) : (
+          <>
+        {/* Stats Grid */}
+        <Container maxWidth="xl" sx={{ mb: 4 }}>
+          <Grid container spacing={3}>
+            {performanceMetrics.map((stat, index) => (
+              <Grid item xs={12} sm={6} lg={2} key={stat.title}>
+                <StatCard stat={stat} index={index} />
+              </Grid>
+            ))}
           </Grid>
-
-          {/* Status Overview */}
-          <Grid item xs={12} lg={4}>
-            <Slide in={animate} direction="up" timeout={1000}>
-              <Paper
-                sx={{
-                  p: 3,
-                  borderRadius: 3,
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  backdropFilter: 'blur(20px)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  height: 400,
-                }}
-              >
-                <Typography
-                  variant="h6"
-                  sx={{
-                    color: 'white',
-                    fontWeight: 600,
-                    mb: 3,
-                  }}
-                >
-                  Test Status Overview
-                </Typography>
-
-                <Stack spacing={3}>
-                  <Box>
-                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
-                      <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.8)' }}>
-                        Test Progress
-                      </Typography>
-                      <Typography variant="body2" sx={{ color: 'white', fontWeight: 600 }}>
-                        75%
-                      </Typography>
-                    </Box>
-                    <LinearProgress
-                      variant="determinate"
-                      value={75}
+        </Container>            {/* Charts and Analytics Section */}
+            <Container maxWidth="xl">
+              <Grid container spacing={3}>
+                {/* Real-time Performance Chart */}
+                <Grid item xs={12} lg={8}>
+                  <Slide in={animate} direction="up" timeout={800}>
+                    <Paper
                       sx={{
-                        height: 8,
-                        borderRadius: 4,
-                        background: 'rgba(255, 255, 255, 0.1)',
-                        '& .MuiLinearProgress-bar': {
-                          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                          borderRadius: 4,
-                        },
-                      }}
-                    />
-                  </Box>
-
-                  <Box>
-                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
-                      <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.8)' }}>
-                        System Health
-                      </Typography>
-                      <Chip
-                        label="Excellent"
-                        size="small"
-                        sx={{
-                          background: 'rgba(76, 175, 80, 0.2)',
-                          color: '#4caf50',
-                          border: '1px solid rgba(76, 175, 80, 0.3)',
-                        }}
-                        icon={<CheckCircle />}
-                      />
-                    </Box>
-                  </Box>
-
-                  <Box>
-                    <Typography
-                      variant="subtitle2"
-                      sx={{
-                        color: 'white',
-                        fontWeight: 600,
-                        mb: 2,
+                        p: 4,
+                        borderRadius: 3,
+                        background: 'white',
+                        border: '1px solid #e2e8f0',
+                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+                        height: 450,
                       }}
                     >
-                      Recent Activity
-                    </Typography>
-                    <Stack spacing={2}>
-                      {[
-                        { time: '2 min ago', event: 'Load test started', status: 'success' },
-                        { time: '5 min ago', event: 'System health check', status: 'success' },
-                        { time: '10 min ago', event: 'Warning: High response time', status: 'warning' },
-                        { time: '15 min ago', event: 'Test configuration updated', status: 'info' },
-                      ].map((activity, index) => (
-                        <Box
-                          key={index}
-                          display="flex"
-                          alignItems="center"
-                          justifyContent="space-between"
+                      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+                        <Typography
+                          variant="h5"
                           sx={{
-                            p: 2,
-                            borderRadius: 2,
-                            background: 'rgba(255, 255, 255, 0.05)',
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
+                            color: '#1e293b',
+                            fontWeight: 700,
                           }}
                         >
-                          <Box>
-                            <Typography
-                              variant="body2"
-                              sx={{
+                          📊 Real-time Performance Metrics
+                        </Typography>
+                        <Tabs
+                          value={currentTab}
+                          onChange={(e, value) => setCurrentTab(value)}
+                          sx={{
+                            '& .MuiTab-root': {
+                              color: '#64748b',
+                              '&.Mui-selected': {
                                 color: 'white',
-                                fontWeight: 500,
-                                mb: 0.5,
-                              }}
-                            >
-                              {activity.event}
-                            </Typography>
-                            <Typography
-                              variant="caption"
-                              sx={{
-                                color: 'rgba(255, 255, 255, 0.6)',
-                              }}
-                            >
-                              {activity.time}
-                            </Typography>
-                          </Box>
-                          <Box
-                            sx={{
-                              width: 8,
-                              height: 8,
-                              borderRadius: '50%',
-                              background:
-                                activity.status === 'success'
-                                  ? '#4caf50'
-                                  : activity.status === 'warning'
-                                  ? '#ff9800'
-                                  : '#2196f3',
+                              },
+                            },
+                            '& .MuiTabs-indicator': {
+                              backgroundColor: 'white',
+                            },
+                          }}
+                        >
+                          <Tab label="Response Time" />
+                          <Tab label="Throughput" />
+                          <Tab label="Errors" />
+                        </Tabs>
+                      </Box>
+                      <ResponsiveContainer width="100%" height={320}>
+                        <AreaChart data={realtimeData}>
+                          <defs>
+                            <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#667eea" stopOpacity={0.8} />
+                              <stop offset="95%" stopColor="#667eea" stopOpacity={0.1} />
+                            </linearGradient>
+                            <linearGradient id="colorResponse" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#4ecdc4" stopOpacity={0.8} />
+                              <stop offset="95%" stopColor="#4ecdc4" stopOpacity={0.1} />
+                            </linearGradient>
+                            <linearGradient id="colorCPU" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#ff6b6b" stopOpacity={0.8} />
+                              <stop offset="95%" stopColor="#ff6b6b" stopOpacity={0.1} />
+                            </linearGradient>
+                          </defs>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                          <XAxis dataKey="time" stroke="#64748b" />
+                          <YAxis stroke="#64748b" />
+                          <RechartsTooltip
+                            contentStyle={{
+                              background: 'white',
+                              border: '1px solid #e2e8f0',
+                              borderRadius: '8px',
+                              color: '#1e293b',
+                              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
                             }}
                           />
+                          <Legend />
+                          <Area
+                            type="monotone"
+                            dataKey="users"
+                            stroke="#667eea"
+                            fillOpacity={1}
+                            fill="url(#colorUsers)"
+                            strokeWidth={3}
+                            name="Active Users"
+                          />
+                          <Area
+                            type="monotone"
+                            dataKey="responseTime"
+                            stroke="#4ecdc4"
+                            fillOpacity={1}
+                            fill="url(#colorResponse)"
+                            strokeWidth={3}
+                            name="Response Time (ms)"
+                          />
+                          <Area
+                            type="monotone"
+                            dataKey="cpuUsage"
+                            stroke="#ff6b6b"
+                            fillOpacity={1}
+                            fill="url(#colorCPU)"
+                            strokeWidth={3}
+                            name="CPU Usage (%)"
+                          />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    </Paper>
+                  </Slide>
+                </Grid>
+
+                {/* System Status & Test Suites */}
+                <Grid item xs={12} lg={4}>
+                  <Stack spacing={3}>
+                    {/* System Health */}
+                    <Slide in={animate} direction="up" timeout={1000}>
+                      <Paper
+                        sx={{
+                          p: 3,
+                          borderRadius: 3,
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          backdropFilter: 'blur(20px)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                        }}
+                      >
+                        <Typography
+                          variant="h6"
+                          sx={{
+                            color: 'white',
+                            fontWeight: 700,
+                            mb: 3,
+                          }}
+                        >
+                          🏥 System Health
+                        </Typography>
+
+                        <Box mb={3}>
+                          <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+                            <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+                              Overall Performance
+                            </Typography>
+                            <Chip
+                              label="Excellent"
+                              size="small"
+                              sx={{
+                                background: 'rgba(76, 175, 80, 0.2)',
+                                color: '#4caf50',
+                                border: '1px solid rgba(76, 175, 80, 0.3)',
+                                fontWeight: 600,
+                              }}
+                              icon={<CheckCircle />}
+                            />
+                          </Box>
+                          <LinearProgress
+                            variant="determinate"
+                            value={92}
+                            sx={{
+                              height: 8,
+                              borderRadius: 4,
+                              background: 'rgba(255, 255, 255, 0.1)',
+                              '& .MuiLinearProgress-bar': {
+                                background: 'linear-gradient(135deg, #4caf50 0%, #388e3c 100%)',
+                                borderRadius: 4,
+                              },
+                            }}
+                          />
+                          <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.6)', mt: 1 }}>
+                            92% - All systems operational
+                          </Typography>
                         </Box>
-                      ))}
-                    </Stack>
-                  </Box>
-                </Stack>
-              </Paper>
-            </Slide>
-          </Grid>
-        </Grid>
+
+                        <Stack spacing={2}>
+                          {[
+                            { label: 'API Response', value: 98, color: '#4caf50' },
+                            { label: 'Database', value: 89, color: '#ff9800' },
+                            { label: 'Cache Layer', value: 95, color: '#4caf50' },
+                            { label: 'Load Balancer', value: 97, color: '#4caf50' },
+                          ].map((metric) => (
+                            <Box key={metric.label}>
+                              <Box display="flex" justifyContent="space-between" mb={0.5}>
+                                <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+                                  {metric.label}
+                                </Typography>
+                                <Typography variant="caption" sx={{ color: 'white', fontWeight: 600 }}>
+                                  {metric.value}%
+                                </Typography>
+                              </Box>
+                              <LinearProgress
+                                variant="determinate"
+                                value={metric.value}
+                                sx={{
+                                  height: 4,
+                                  borderRadius: 2,
+                                  background: 'rgba(255, 255, 255, 0.1)',
+                                  '& .MuiLinearProgress-bar': {
+                                    background: metric.color,
+                                    borderRadius: 2,
+                                  },
+                                }}
+                              />
+                            </Box>
+                          ))}
+                        </Stack>
+                      </Paper>
+                    </Slide>
+
+                    {/* Active Test Suites */}
+                    <Slide in={animate} direction="up" timeout={1200}>
+                      <Paper
+                        sx={{
+                          p: 3,
+                          borderRadius: 3,
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          backdropFilter: 'blur(20px)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                        }}
+                      >
+                        <Typography
+                          variant="h6"
+                          sx={{
+                            color: 'white',
+                            fontWeight: 700,
+                            mb: 3,
+                          }}
+                        >
+                          🧪 Active Test Suites
+                        </Typography>
+
+                        <Stack spacing={2}>
+                          {testSuites.map((test, index) => (
+                            <Paper
+                              key={index}
+                              sx={{
+                                p: 2.5,
+                                background: 'rgba(255, 255, 255, 0.05)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                borderRadius: 2,
+                                transition: 'all 0.3s ease',
+                                '&:hover': {
+                                  background: 'rgba(255, 255, 255, 0.1)',
+                                  transform: 'translateY(-2px)',
+                                },
+                              }}
+                            >
+                              <Box display="flex" alignItems="center" mb={2}>
+                                <test.icon sx={{ color: test.color, fontSize: 20, mr: 1.5 }} />
+                                <Box flexGrow={1}>
+                                  <Typography
+                                    variant="subtitle2"
+                                    sx={{
+                                      color: 'white',
+                                      fontWeight: 600,
+                                      mb: 0.5,
+                                    }}
+                                  >
+                                    {test.name}
+                                  </Typography>
+                                  <Box display="flex" alignItems="center" gap={1}>
+                                    <Chip
+                                      label={test.status}
+                                      size="small"
+                                      sx={{
+                                        background: test.status === 'running' ? 'rgba(76, 175, 80, 0.2)' : 
+                                                   test.status === 'completed' ? 'rgba(33, 150, 243, 0.2)' : 
+                                                   'rgba(255, 152, 0, 0.2)',
+                                        color: test.status === 'running' ? '#4caf50' : 
+                                               test.status === 'completed' ? '#2196f3' : '#ff9800',
+                                        fontSize: '0.7rem',
+                                        fontWeight: 600,
+                                      }}
+                                    />
+                                    <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                                      {test.users} users • {test.duration}
+                                    </Typography>
+                                  </Box>
+                                </Box>
+                              </Box>
+                              
+                              <LinearProgress
+                                variant="determinate"
+                                value={test.progress}
+                                sx={{
+                                  height: 6,
+                                  borderRadius: 3,
+                                  background: 'rgba(255, 255, 255, 0.1)',
+                                  '& .MuiLinearProgress-bar': {
+                                    background: test.color,
+                                    borderRadius: 3,
+                                  },
+                                }}
+                              />
+                              <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.6)', mt: 1 }}>
+                                {test.progress}% complete
+                              </Typography>
+                            </Paper>
+                          ))}
+                        </Stack>
+                      </Paper>
+                    </Slide>
+                  </Stack>
+                </Grid>
+              </Grid>
+            </Container>
+          </>
+        )}
       </Box>
+
+      {/* Logout Confirmation Dialog */}
+      <Dialog
+        open={logoutDialogOpen}
+        onClose={cancelLogout}
+        maxWidth="xs"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 3,
+            background: 'rgba(255, 255, 255, 0.1)',
+            backdropFilter: 'blur(20px)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+          }
+        }}
+      >
+        <DialogTitle sx={{ color: 'white', fontWeight: 700 }}>
+          🚪 Confirm Logout
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText sx={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+            Are you sure you want to logout? You will need to sign in again to access the dashboard.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions sx={{ p: 3 }}>
+          <Button 
+            onClick={cancelLogout} 
+            sx={{ 
+              color: 'rgba(255, 255, 255, 0.8)',
+              '&:hover': { color: 'white' }
+            }}
+          >
+            Cancel
+          </Button>
+          <Button 
+            onClick={confirmLogout} 
+            variant="contained"
+            sx={{
+              background: 'linear-gradient(135deg, #f44336 0%, #d32f2f 100%)',
+              '&:hover': {
+                background: 'linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%)',
+              }
+            }}
+          >
+            Logout
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Snackbar for notifications */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      >
+        <Alert 
+          onClose={() => setSnackbarOpen(false)} 
+          severity={isRunning ? "error" : "success"}
+          sx={{ 
+            background: 'rgba(0, 0, 0, 0.8)',
+            color: 'white',
+            '& .MuiAlert-icon': {
+              color: isRunning ? '#f44336' : '#4caf50'
+            }
+          }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

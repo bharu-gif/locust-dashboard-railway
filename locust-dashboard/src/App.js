@@ -4,9 +4,9 @@ import { ThemeProvider } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
 import { modernTheme } from './theme/modernTheme';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
-import Dashboard from './pages/Dashboard';
+import NewLogin from './pages/NewLogin';
+import NewSignup from './pages/NewSignup';
+import NewDashboard from './pages/NewDashboard';
 
 // Protected Route Component
 function ProtectedRoute({ children }) {
@@ -45,7 +45,7 @@ function AppRoutes() {
         path="/login" 
         element={
           <PublicRoute>
-            <Login />
+            <NewLogin />
           </PublicRoute>
         } 
       />
@@ -53,7 +53,7 @@ function AppRoutes() {
         path="/signup" 
         element={
           <PublicRoute>
-            <Signup />
+            <NewSignup />
           </PublicRoute>
         } 
       />
@@ -61,7 +61,7 @@ function AppRoutes() {
         path="/dashboard" 
         element={
           <ProtectedRoute>
-            <Dashboard />
+            <NewDashboard />
           </ProtectedRoute>
         } 
       />

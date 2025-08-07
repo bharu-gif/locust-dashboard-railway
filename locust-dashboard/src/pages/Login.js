@@ -11,8 +11,6 @@ import {
   IconButton,
   InputAdornment,
   Fade,
-  Slide,
-  Zoom,
   Stack,
   Divider,
   Avatar,
@@ -35,21 +33,23 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [animate, setAnimate] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Check for success message from signup redirect
   useEffect(() => {
+    setAnimate(true);
+    // Check for success message from signup redirect
     if (location.state?.message) {
       setSuccessMessage(location.state.message);
-      if (location.state?.email) {
-        setEmail(location.state.email);
-      }
       // Clear the location state to prevent showing message on refresh
       window.history.replaceState({}, document.title);
+    }
+    if (location.state?.email) {
+      setEmail(location.state.email);
     }
   }, [location.state]);
 
@@ -63,7 +63,6 @@ export default function Login() {
       if (result.success) {
         navigate('/dashboard');
       } else {
-        // Ensure error is always a string
         const errorMsg = typeof result.error === 'string' ? result.error : 'Invalid credentials. Please try again.';
         setError(errorMsg);
       }
@@ -79,7 +78,7 @@ export default function Login() {
     <Box
       sx={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: '#f8fafc',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -89,12 +88,17 @@ export default function Login() {
       <Container maxWidth="sm">
         <Fade in timeout={600}>
           <Paper
-            elevation={8}
+            elevation={0}
             sx={{
               p: 4,
               borderRadius: 3,
               background: 'white',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+              border: '1px solid #e2e8f0',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+              color: '#1e293b',
+              '& *': {
+                color: 'inherit',
+              },
             }}
           >
             <Box textAlign="center" sx={{ mb: 4 }}>
@@ -114,7 +118,7 @@ export default function Login() {
                 variant="h4"
                 sx={{
                   fontWeight: 700,
-                  color: '#1a1a1a',
+                  color: '#1e293b',
                   mb: 1,
                 }}
               >
@@ -124,7 +128,7 @@ export default function Login() {
               <Typography
                 variant="body1"
                 sx={{
-                  color: '#666',
+                  color: '#64748b',
                   fontWeight: 400,
                 }}
               >
@@ -156,7 +160,17 @@ export default function Login() {
               </Alert>
             )}
 
-            <Box component="form" onSubmit={handleSubmit}>
+            <Box component="form" onSubmit={handleSubmit} sx={{ 
+              '& .MuiInputBase-input': {
+                color: '#1e293b !important',
+              },
+              '& .MuiFormLabel-root': {
+                color: '#64748b !important',
+              },
+              '& .MuiFormLabel-root.Mui-focused': {
+                color: '#667eea !important',
+              },
+            }}>
               <TextField
                 fullWidth
                 label="Email Address"
@@ -168,12 +182,30 @@ export default function Login() {
                   mb: 3,
                   '& .MuiOutlinedInput-root': {
                     borderRadius: 2,
+                    '& fieldset': {
+                      borderColor: '#e2e8f0',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: '#cbd5e1',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#667eea',
+                    },
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: '#64748b',
+                    '&.Mui-focused': {
+                      color: '#667eea',
+                    },
+                  },
+                  '& .MuiInputBase-input': {
+                    color: '#1e293b',
                   },
                 }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Email sx={{ color: '#666' }} />
+                      <Email sx={{ color: '#64748b' }} />
                     </InputAdornment>
                   ),
                 }}
@@ -190,12 +222,30 @@ export default function Login() {
                   mb: 3,
                   '& .MuiOutlinedInput-root': {
                     borderRadius: 2,
+                    '& fieldset': {
+                      borderColor: '#e2e8f0',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: '#cbd5e1',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#667eea',
+                    },
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: '#64748b',
+                    '&.Mui-focused': {
+                      color: '#667eea',
+                    },
+                  },
+                  '& .MuiInputBase-input': {
+                    color: '#1e293b',
                   },
                 }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Lock sx={{ color: '#666' }} />
+                      <Lock sx={{ color: '#64748b' }} />
                     </InputAdornment>
                   ),
                   endAdornment: (
@@ -203,7 +253,7 @@ export default function Login() {
                       <IconButton
                         onClick={() => setShowPassword(!showPassword)}
                         edge="end"
-                        sx={{ color: '#666' }}
+                        sx={{ color: '#64748b' }}
                       >
                         {showPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
@@ -230,7 +280,10 @@ export default function Login() {
                     boxShadow: '0 4px 20px rgba(102, 126, 234, 0.4)',
                   },
                   '&:disabled': {
-                    background: '#ccc',
+                    background: '#e2e8f0',
+                    color: '#64748b !important',
+                    transform: 'none',
+                    boxShadow: 'none',
                   },
                 }}
                 startIcon={isLoading ? null : <FingerprintOutlined />}
@@ -238,8 +291,8 @@ export default function Login() {
                 {isLoading ? 'Signing In...' : 'Sign In'}
               </Button>
 
-              <Divider sx={{ mb: 3, color: '#666' }}>
-                <Typography variant="body2" sx={{ color: '#666' }}>
+              <Divider sx={{ mb: 3, color: '#64748b' }}>
+                <Typography variant="body2" sx={{ color: '#64748b' }}>
                   Or continue with
                 </Typography>
               </Divider>
@@ -252,11 +305,12 @@ export default function Login() {
                   sx={{
                     py: 1.5,
                     borderRadius: 2,
-                    color: '#666',
-                    borderColor: '#ddd',
+                    color: '#64748b',
+                    borderColor: '#e2e8f0',
                     '&:hover': {
                       borderColor: '#667eea',
                       color: '#667eea',
+                      background: '#f8fafc',
                     },
                   }}
                 >
@@ -269,11 +323,12 @@ export default function Login() {
                   sx={{
                     py: 1.5,
                     borderRadius: 2,
-                    color: '#666',
-                    borderColor: '#ddd',
+                    color: '#64748b',
+                    borderColor: '#e2e8f0',
                     '&:hover': {
                       borderColor: '#667eea',
                       color: '#667eea',
+                      background: '#f8fafc',
                     },
                   }}
                 >
@@ -282,7 +337,7 @@ export default function Login() {
               </Stack>
 
               <Box textAlign="center">
-                <Typography variant="body2" sx={{ color: '#666' }}>
+                <Typography variant="body2" sx={{ color: '#64748b' }}>
                   Don't have an account?{' '}
                   <Link 
                     component={RouterLink} 
