@@ -6,7 +6,7 @@ const AuthContext = createContext();
 // Configure API base URL based on environment
 const API_BASE_URL = process.env.REACT_APP_API_URL || 
   (process.env.NODE_ENV === 'production' 
-    ? 'https://your-railway-app-name.railway.app' 
+    ? 'https://locust-dashboard-railway-production.up.railway.app' 
     : 'http://localhost:8000');
 
 // Utility function to safely extract error messages
